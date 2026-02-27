@@ -1,13 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.models import user, experiment, assignment
+
+# DB setup
 from app.db.database import Base, engine
+
+# Import models so SQLAlchemy creates the tables
+from app.models import user
+from app.models import experiment
+from app.models import assignment
+from app.models import event
+
+# Import API routers
 from app.api import users
-from app.api import auth          
-from app.api import experiments  
-from app.api import assignment
+from app.api import auth
+from app.api import experiments
+from app.api import assignments
+from app.api import events
 
-
+# Create all tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -24,10 +34,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register routers
 app.include_router(users.router)
-app.include_router(auth.router)   
-app.include_router(experiments.router) 
-app.include_router(assignment.router) 
+app.include_router(auth.router)
+app.include_router(experiments.router)
+app.include_router(assignments.router)
+app.include_router(events.router)
 
 @app.get("/health")
 def health_check():
