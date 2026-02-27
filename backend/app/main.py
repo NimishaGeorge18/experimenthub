@@ -9,6 +9,7 @@ from app.models import user
 from app.models import experiment
 from app.models import assignment
 from app.models import event
+from app.api import analytics
 
 # Import API routers
 from app.api import users
@@ -40,6 +41,7 @@ app.include_router(auth.router)
 app.include_router(experiments.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
+app.include_router(analytics.router)
 
 @app.get("/health")
 def health_check():
