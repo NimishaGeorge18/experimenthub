@@ -18,6 +18,9 @@ from app.api import experiments
 from app.api import assignments
 from app.api import events
 
+from app.api import webhooks           # NEW
+from app.models import webhook         # NEW
+
 # Create all tables
 Base.metadata.create_all(bind=engine)
 
@@ -42,7 +45,7 @@ app.include_router(experiments.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(analytics.router)
-
+app.include_router(webhooks.router) 
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "ExperimentHub API"}

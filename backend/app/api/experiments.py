@@ -10,6 +10,7 @@ from app.schemas.experiment import (
     ExperimentResponse,
     ExperimentStatusUpdate
 )
+from app.webhooks.sender import send_webhook 
 
 router = APIRouter(prefix="/experiments", tags=["Experiments"])
 
@@ -74,7 +75,22 @@ def update_status(
     experiment = db.query(Experiment).filter(Experiment.id == experiment_id).first()
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found.")
+    
     experiment.status = payload.status
     db.commit()
     db.refresh(experiment)
+
+    # Fire webhook notification after status change
+    send_webhook(
+        db=db,
+        experiment_id=experiment_id,
+        event_type="experiment.status_changed",
+        payload={
+            "event": "experiment.status_changed",
+            "experiment_id": experiment_id,
+            "experiment_name": experiment.name,
+            "new_status": payload.status.value
+        }
+    )
+
     return experiment
