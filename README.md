@@ -235,4 +235,4 @@ ExperimentHub/
 
 ---
 
-Built with ❤️ by Nimisha George
+Built by Nimisha George
