@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { getExperiment, updateStatus, getAnalytics } from '../api/experiments';
+import { getExperiment, updateStatus, getAnalytics, assignVisitor, trackEvent } from '../api/experiments';
 
 const statusColors = {
   draft: { bg: '#fff8e1', color: '#f59e0b' },
@@ -20,6 +20,11 @@ export default function ExperimentDetail() {
   const [eventType, setEventType] = useState('purchase');
   const [loading, setLoading] = useState(true);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [demoUserId, setDemoUserId] = useState('');
+  const [demoEventType, setDemoEventType] = useState('checkout_click');
+  const [assignmentResult, setAssignmentResult] = useState(null);
+  const [eventResult, setEventResult] = useState(null);
+  const [demoError, setDemoError] = useState('');
 
   useEffect(() => {
     getExperiment(id)
@@ -44,6 +49,40 @@ export default function ExperimentDetail() {
       console.error(err);
     }
   };
+
+  const handleAssignVisitor = async () => {
+  if (!demoUserId.trim()) {
+    setDemoError('Please enter a visitor ID.');
+    return;
+  }
+
+  setDemoError('');
+  setAssignmentResult(null);
+
+  try {
+    const res = await assignVisitor(id, demoUserId.trim());
+    setAssignmentResult(res.data);
+  } catch (err) {
+    setDemoError(err.response?.data?.detail || 'Failed to assign visitor.');
+  }
+};
+
+const handleTrackEvent = async () => {
+  if (!demoUserId.trim() || !demoEventType.trim()) {
+    setDemoError('Please enter both visitor ID and event type.');
+    return;
+  }
+
+  setDemoError('');
+  setEventResult(null);
+
+  try {
+    const res = await trackEvent(demoUserId.trim(), id, demoEventType.trim());
+    setEventResult(res.data);
+  } catch (err) {
+    setDemoError(err.response?.data?.detail || 'Failed to track event.');
+  }
+};
 
   if (loading) return <div style={styles.center}>Loading...</div>;
   if (!experiment) return <div style={styles.center}>Experiment not found.</div>;
@@ -106,6 +145,61 @@ export default function ExperimentDetail() {
             ))}
           </div>
         </div>
+
+        {/* Demo Tools */}
+<div style={styles.card}>
+  <h3 style={styles.cardTitle}>Demo Tools</h3>
+  <p style={styles.helperText}>
+    Assign a visitor to a variant and track an event for this experiment.
+  </p>
+
+  <div style={styles.demoGrid}>
+    <div>
+      <label style={styles.label}>Visitor ID</label>
+      <input
+        value={demoUserId}
+        onChange={e => setDemoUserId(e.target.value)}
+        style={styles.eventInput}
+        placeholder="visitor_127"
+      />
+    </div>
+
+    <div>
+      <label style={styles.label}>Event Type</label>
+      <input
+        value={demoEventType}
+        onChange={e => setDemoEventType(e.target.value)}
+        style={styles.eventInput}
+        placeholder="checkout_click"
+      />
+    </div>
+  </div>
+
+  <div style={styles.demoActions}>
+    <button onClick={handleAssignVisitor} style={styles.assignBtn}>
+      Assign Visitor
+    </button>
+    <button onClick={handleTrackEvent} style={styles.trackBtn}>
+      Track Event
+    </button>
+  </div>
+
+  {demoError && <p style={styles.errorText}>{demoError}</p>}
+
+  {assignmentResult && (
+    <div style={styles.resultBox}>
+      Assigned <strong>{assignmentResult.user_id}</strong> to{' '}
+      <strong>{assignmentResult.variant_name}</strong>
+    </div>
+  )}
+
+  {eventResult && (
+    <div style={styles.resultBox}>
+      Event <strong>{eventResult.event_type}</strong> recorded for{' '}
+      <strong>{eventResult.user_id}</strong>
+    </div>
+  )}
+</div>
 
         {/* Analytics */}
         <div style={styles.card}>
@@ -215,5 +309,13 @@ const styles = {
   th: { textAlign: 'left', padding: '12px 16px', background: '#f9f9f9', fontSize: '13px', fontWeight: '600', color: '#666' },
   td: { padding: '12px 16px', borderTop: '1px solid #f5f5f5', fontSize: '14px', color: '#1a1a1a' },
   dot: { display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', marginRight: '8px' },
+  helperText: { color: '#888', fontSize: '14px', marginBottom: '16px' },
+demoGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' },
+label: { display: 'block', fontSize: '13px', fontWeight: '600', color: '#444', marginBottom: '6px' },
+demoActions: { display: 'flex', gap: '12px', marginTop: '8px' },
+assignBtn: { padding: '10px 20px', background: '#667eea', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' },
+trackBtn: { padding: '10px 20px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' },
+resultBox: { marginTop: '14px', padding: '12px 16px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px', color: '#166534', fontSize: '14px' },
+errorText: { marginTop: '12px', color: '#dc2626', fontSize: '14px' },
   center: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#aaa' }
 };
