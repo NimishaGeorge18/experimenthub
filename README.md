@@ -1,55 +1,55 @@
-# ExperimentHub 
+# ExperimentHub 🧪
 
 A full-stack A/B testing and experimentation platform that helps companies test product changes safely before releasing them to everyone.
 
 ---
 
-##  What Is ExperimentHub?
+## 🌍 What Is ExperimentHub?
 
-Companies constantly change things in their apps — new button text, new checkout flows, new pricing layouts, onboarding screens, and more. But releasing a change to 100% of users immediately is risky. If the new version performs worse, the company can lose money, users, or conversions.
+Companies constantly change things in their apps — new button text, new checkout flows, pricing layouts, onboarding screens, and more. But releasing a change to 100% of users immediately is risky. If the new version performs worse, the company can lose money, users, or conversions.
 
 ExperimentHub solves this by:
 
-* Splitting traffic between versions, such as 50% seeing the current version and 50% seeing the new version
-* Assigning users consistently to the same variant
-* Tracking what users actually do, such as clicks, signups, or purchases
-* Calculating which version performed better
+* Splitting traffic between different versions of a feature
+* Assigning visitors consistently to the same variant
+* Tracking user actions such as clicks, signups, and purchases
+* Calculating conversion rates for each variant
+* Identifying the winning variant based on performance
 * Helping teams make data-driven product decisions
 
 It operates behind the scenes. End users do not know they are part of an experiment.
 
 ---
 
-##  How It Works
+## 🏗️ How It Works
 
 ```text
-Company defines experiment
+Company defines an experiment
         ↓
-User opens company's app
+User opens the company's app
         ↓
 Company's app calls ExperimentHub:
-POST /assignments/1 → {"user_id": "user_123"}
+POST /assignments/{experiment_id}
         ↓
-ExperimentHub responds:
-{"variant_name": "Treatment"}
+ExperimentHub assigns the user to a variant
         ↓
 Company's app shows the assigned version
         ↓
-User performs an action, such as purchase/signup/click
+User performs an action such as click, signup, or purchase
         ↓
 Company's app calls ExperimentHub:
-POST /events/ → {"event_type": "purchase"}
+POST /events/
         ↓
 ExperimentHub records the event
         ↓
-Admin views analytics → Winner decided 🏆
+Admin views analytics and winner is calculated
 ```
 
 ---
 
-##  Demo Flow: Checkout Button Color Test
+## 🎯 Demo Flow: Checkout Button Color Test
 
-This demo shows the core backend flow of ExperimentHub: user authentication, experiment creation, variant assignment, event tracking, and analytics.
+This demo shows the core backend flow of ExperimentHub: user authentication, experiment creation, visitor assignment, event tracking, analytics, and winner calculation.
 
 ### 1. Start the backend
 
@@ -189,10 +189,56 @@ This confirms that ExperimentHub supports:
 * Event tracking
 * Conversion analytics
 * Winner calculation
+* React frontend dashboard for viewing experiments
+* Frontend experiment creation flow
+* Frontend experiment status updates
+* Demo Tools UI for assigning visitors to variants
+* Demo Tools UI for tracking visitor events
+* Frontend analytics chart and conversion table using Recharts
 
 ---
 
-##  Tech Stack
+## 🖥️ Frontend Demo Tools
+
+The React frontend includes an admin dashboard for managing and testing experiments.
+
+From the frontend, an admin can:
+
+* View all experiments
+* Create a new experiment with variants and traffic splits
+* Open an experiment detail page
+* Start, pause, resume, or complete an experiment
+* View experiment variants and traffic distribution
+* Assign demo visitors to variants
+* Track demo events for assigned visitors
+* Analyze conversion rates using charts and tables
+
+### Example Frontend Demo
+
+For the `Homepage CTA Text Test`, two variants were created:
+
+* Start Free Trial
+* Get Started
+
+Using the Demo Tools section, visitors were assigned to variants and `signup_click` events were tracked.
+
+Example result:
+
+```text
+Start Free Trial:
+3 users, 1 conversion = 33.33%
+
+Get Started:
+4 users, 1 conversion = 25%
+
+Winner: Start Free Trial
+```
+
+This confirms that the frontend is connected to the backend and can demonstrate the full experimentation flow from the browser.
+
+---
+
+## 🛠️ Tech Stack
 
 ### Backend
 
@@ -204,8 +250,8 @@ This confirms that ExperimentHub supports:
 | Pydantic          | Request and response validation |
 | JWT / python-jose | Authentication                  |
 | bcrypt / passlib  | Password hashing                |
-| httpx             | Webhook delivery                |
 | pytest            | Automated testing               |
+| httpx             | Webhook delivery                |
 
 ### Frontend
 
@@ -225,25 +271,9 @@ This confirms that ExperimentHub supports:
 
 ---
 
-##  How To Run Locally
+## 🚀 How To Run Locally
 
-### Option 1 — Docker
-
-Make sure Docker Desktop is running, then run:
-
-```bash
-git clone https://github.com/NimishaGeorge18/experimenthub.git
-cd ExperimentHub
-docker-compose up
-```
-
-Everything starts automatically:
-
-* Frontend: `http://localhost:3000`
-* Backend API: `http://localhost:8000`
-* API Docs: `http://localhost:8000/docs`
-
-### Option 2 — Manual
+### Option 1 — Manual Setup
 
 #### Backend
 
@@ -263,15 +293,39 @@ http://127.0.0.1:8000/docs
 
 #### Frontend
 
+Open a new terminal tab:
+
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
+Frontend app:
+
+```text
+http://localhost:3000
+```
+
+### Option 2 — Docker
+
+Make sure Docker Desktop is running, then run:
+
+```bash
+git clone https://github.com/NimishaGeorge18/experimenthub.git
+cd ExperimentHub
+docker-compose up
+```
+
+Expected local URLs:
+
+* Frontend: `http://localhost:3000`
+* Backend API: `http://localhost:8000`
+* API Docs: `http://localhost:8000/docs`
+
 ---
 
-##  API Endpoints
+## 📡 API Endpoints
 
 ### Auth
 
@@ -330,7 +384,7 @@ npm start
 
 ---
 
-##  Running Tests
+## 🧪 Running Tests
 
 ```bash
 cd backend
@@ -349,7 +403,7 @@ Tests cover:
 
 ---
 
-##  How A/B Testing Works
+## 📊 How A/B Testing Works
 
 ### Traffic Splitting
 
@@ -407,12 +461,12 @@ Blue Button:
 Green Button:
 2 checkout clicks / 2 assigned users = 100%
 
-Winner: Green Button 🏆
+Winner: Green Button
 ```
 
 ---
 
-##  What I Learned
+## 💡 What I Learned
 
 * Designing and building a REST API from scratch with FastAPI
 * Structuring a backend using routes, schemas, models, services, and database layers
@@ -420,16 +474,19 @@ Winner: Green Button 🏆
 * User authentication using JWT
 * Secure password hashing with bcrypt/passlib
 * Protecting API endpoints with Bearer token authentication
+* Connecting a React frontend to a protected FastAPI backend using JWT tokens
+* Building frontend demo tools for testing assignment and event tracking
+* Displaying conversion analytics with Recharts
 * Building core A/B testing logic such as experiment creation, traffic splitting, assignment, event tracking, and analytics
 * Validating experiment configuration, including traffic splits adding up to 1.0
-* Managing experiment lifecycle states such as draft and running
+* Managing experiment lifecycle states such as draft, running, paused, and completed
+* Debugging frontend/backend integration issues such as missing backend server, expired tokens, and protected route behavior
 * Writing automated tests with pytest
-* Creating a React dashboard structure for frontend integration
 * Using Docker and Docker Compose for local development
 
 ---
 
-##  Project Structure
+## 📁 Project Structure
 
 ```text
 ExperimentHub/
@@ -447,8 +504,10 @@ ExperimentHub/
 ├── frontend/
 │   ├── src/
 │   │   ├── api/          # Axios API calls
-│   │   ├── pages/        # Login, Experiments, Analytics
-│   │   └── App.js        # Routing
+│   │   ├── components/   # Reusable UI components
+│   │   ├── pages/        # Login, Register, Experiments, Details
+│   │   ├── App.js        # Routing
+│   │   └── index.js      # React entry point
 │   └── Dockerfile
 ├── docker-compose.yml
 └── README.md
@@ -456,14 +515,18 @@ ExperimentHub/
 
 ---
 
-##  Future Improvements
+## 🔮 Future Improvements
 
 * Fix Swagger authorization flow so protected endpoints can be tested directly from the Swagger Authorize button
-* Add more frontend screens for experiment creation, assignment testing, and analytics visualization
-* Add charts for conversion rates using Recharts
+* Polish frontend UI and improve error/loading states
+* Add screenshots or GIF demo to README
+* Add deployment instructions for frontend and backend
 * Add role-based access control for admin users
 * Improve analytics with statistical significance calculations
-* Add deployment instructions
 * Add CI/CD pipeline for automated testing
+* Add production-ready environment variable setup
+* Add better logging and monitoring
 
 ---
+
+
