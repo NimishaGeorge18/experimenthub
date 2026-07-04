@@ -13,3 +13,4 @@ backend/.env
 # Node
 frontend/node_modules/.vscode/
 .vscode/
+Findings.pages
