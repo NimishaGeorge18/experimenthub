@@ -6,7 +6,7 @@ from app.db.database import SessionLocal
 from app.core.security import decode_access_token
 
 # Tells FastAPI where to expect the token (Authorization: Bearer <token>)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def get_db():
     db = SessionLocal()
