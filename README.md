@@ -221,6 +221,7 @@ For the `Homepage CTA Text Test`, two variants were created:
 * Get Started
 
 Using the Demo Tools section, visitors were assigned to variants and `signup_click` events were tracked.
+The React frontend supports creating experiments, starting experiments, assigning visitors, tracking events, and viewing analytics charts through the UI.
 
 Example result:
 
